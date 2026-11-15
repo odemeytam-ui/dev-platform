@@ -11,7 +11,7 @@ locals {
     standard_labels = {
         managed-by  = "terraform"
         environment = var.environment
-        team =      = var.team
+        team        = var.team
     }
 }
 

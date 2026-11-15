@@ -12,12 +12,12 @@ variable "kube_context" {
 
 variable "namespaces" {
     description = "Map of namespaces to provision"
-    type        = map(object({
+    type = map(object({
         environment  = string
         team         = string
         enable_quota = optional(bool, false)
         cpu_limit    = optional(string, "1")
         memory_limit = optional(string, "1Gi")
-        extra_labels = optional(map(string, {}))
+        extra_labels = optional(map(string), {})
     }))
 }
