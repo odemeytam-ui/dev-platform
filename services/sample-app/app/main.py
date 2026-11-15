@@ -1,8 +1,9 @@
 import os
 from contextlib import asynccontextmanager
+
+import psycopg
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import psycopg
 
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
@@ -20,14 +21,13 @@ def get_conn():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS items (
-                    id SERIAL PRIMARY KEY,
-                    name TEXT NOT NULL
-                );
-            """)
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS items (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL
+            );
+        """)
         conn.commit()
     yield
 
@@ -52,28 +52,25 @@ def liveness():
 @app.get("/readyz")
 def readiness():
     try:
-        with get_conn() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT 1;")
+        with get_conn() as conn, conn.cursor() as cur:
+            cur.execute("SELECT 1;")
         return {"status": "ready", "database": "connected"}
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Database unavailable: {e}")
+    except psycopg.Error as e:
+        raise HTTPException(status_code=503, detail=f"Database unavailable: {e}") from e
 
 
 @app.get("/items")
 def list_items():
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT id, name FROM items ORDER BY id;")
-            rows = cur.fetchall()
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute("SELECT id, name FROM items ORDER BY id;")
+        rows = cur.fetchall()
     return [{"id": r[0], "name": r[1]} for r in rows]
 
 
 @app.post("/items", status_code=201)
 def create_item(item: ItemIn):
-    with get_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute("INSERT INTO items (name) VALUES (%s) RETURNING id;", (item.name,))
-            new_id = cur.fetchone()[0]
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute("INSERT INTO items (name) VALUES (%s) RETURNING id;", (item.name,))
+        new_id = cur.fetchone()[0]
         conn.commit()
     return {"id": new_id, "name": item.name}
