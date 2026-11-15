@@ -37,3 +37,26 @@ resource "kubernetes_resource_quota_v1" "this" {
         }
     }
 }
+
+resource "kubernetes_limit_range_v1" "this" {
+  count = var.enable_quota ? 1 : 0
+
+  metadata {
+    name      = "${var.name}-limits"
+    namespace = kubernetes_namespace_v1.this.metadata.name
+  }
+
+  spec {
+    limit {
+      type = "Container"
+      default = {
+        cpu    = "250m"
+        memory = "256Mi"
+      }
+      default_request = {
+        cpu    = "50m"
+        memory = "64Mi"
+      }
+    }
+  }
+}

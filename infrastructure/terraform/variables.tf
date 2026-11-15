@@ -21,3 +21,9 @@ variable "namespaces" {
         extra_labels = optional(map(string), {})
     }))
 }
+
+variable "app_db_password" {
+  description = "Sensitive database password injected into Kubernetes Secret"
+  type        = string
+  sensitive   = true
+}
