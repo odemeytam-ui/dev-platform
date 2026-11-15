@@ -43,7 +43,7 @@ resource "kubernetes_limit_range_v1" "this" {
 
   metadata {
     name      = "${var.name}-limits"
-    namespace = kubernetes_namespace_v1.this.metadata.name
+    namespace = kubernetes_namespace_v1.this.metadata[0].name
   }
 
   spec {

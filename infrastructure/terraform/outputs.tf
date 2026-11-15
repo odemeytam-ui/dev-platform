@@ -15,7 +15,7 @@ output "dev_service_account" {
 
 output "secret_name" {
   description = "Name of the managed Kubernetes Secret"
-  value       = kubernetes_secret_v1.db_credentials.metadata.name
+  value       = kubernetes_secret_v1.db_credentials.metadata[0].name
 }
 
 output "db_password_check" {

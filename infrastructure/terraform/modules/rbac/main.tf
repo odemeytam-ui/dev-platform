@@ -36,12 +36,12 @@ resource "kubernetes_role_binding_v1" "this" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role_v1.reader.metadata.name
+    name      = kubernetes_role_v1.reader.metadata[0].name
   }
 
   subject {
     kind      = "ServiceAccount"
-    name      = kubernetes_service_account_v1.this.metadata.name
+    name      = kubernetes_service_account_v1.this.metadata[0].name
     namespace = var.namespace
   }
 }
