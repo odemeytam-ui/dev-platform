@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN apt-get update && \
 COPY app/requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
-    pip uninstall -y setuptools wheel
+    rm -rf /usr/local/lib/python3.13/ensurepip
 
 COPY app/ ./app/
 USER appuser
