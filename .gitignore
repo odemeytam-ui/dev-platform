@@ -1,0 +1,78 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+.secret/
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.venv/
+venv/
+ENV/
+
+# Node.js
+node_modules/
+dist/
+build/
+.npm/
+.next/
+coverage/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfplan
+*.plan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Kubernetes / Helm generated local files
+*.secret.yaml
+*.secrets.yaml
+helm-charts/
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+.cache/
+
+# Local databases and data
+*.sqlite
+*.sqlite3
+*.db
+data/
