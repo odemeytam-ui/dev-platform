@@ -2,11 +2,15 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Run as non-root user for security best practices
-RUN useradd -m appuser
+# Apply latest Debian security patches and create non-root user
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m appuser
 
 COPY app/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY app/ ./app/
 USER appuser
