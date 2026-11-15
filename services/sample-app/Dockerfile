@@ -11,7 +11,8 @@ RUN apt-get update && \
 COPY app/requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
-    rm -rf /usr/local/lib/python3.13/ensurepip
+    pip uninstall -y setuptools wheel || true && \
+    find / -name "*setuptools*" -exec rm -rf {} + 2>/dev/null || true
 
 COPY app/ ./app/
 USER appuser
