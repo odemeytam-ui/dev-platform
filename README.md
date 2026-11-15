@@ -1,4 +1,4 @@
-# Internal Developer Platform
+# DevPlatform
 
 A hands-on Internal Developer Platform (IDP) built to explore Kubernetes, Infrastructure as Code, GitOps, CI/CD, multi-tenancy, and platform engineering.
 
