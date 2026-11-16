@@ -7,7 +7,10 @@ metadata:
     {{- include "fastapi-chart.labels" . | nindent 4 }}
 spec:
   rules:
-    - http:
+    - {{- if .Values.app.ingress.host }}
+      host: {{ .Values.app.ingress.host | quote }}
+      {{- end }}
+      http:
         paths:
           - path: {{ .Values.app.ingress.path }}
             pathType: {{ .Values.app.ingress.pathType }}
