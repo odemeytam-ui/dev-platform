@@ -1,4 +1,4 @@
-# DevPlatform
+# Internal Developer Platform
 
 A hands-on Internal Developer Platform (IDP) built to explore Kubernetes, Infrastructure as Code, GitOps, CI/CD, multi-tenancy, and platform engineering.
 
@@ -279,3 +279,31 @@ Tool installation will be documented as the relevant phase begins. Versions shou
 **Planning / Phase 1 — Project foundation.**
 
 The next milestone is to create the repository, add the initial documentation, verify the development environment, and commit the foundation before starting the Kubernetes implementation.
+
+**Phase 2 - k3d Multi-Node Kubernetes Cluster Runbook**
+
+## Cluster Architecture
+- **Cluster Name:** `dev-platform-cluster`
+- **Engine:** k3d (`v1alpha5`) on Docker Desktop (WSL2)
+- **Topology:**
+  - `server-0`: Control-plane node (tainted with `node-role.kubernetes.io/control-plane:NoSchedule` so app pods run only on workers).
+  - `agent-0`, `agent-1`: Worker nodes hosting all application workloads.
+  - `serverlb`: NGINX loadbalancer container forwarding host ports (`8080 -> 80`, `8082 -> 30005`) into the cluster.
+
+## Quick Lifecycle Commands
+- **Create cluster:** `k3d cluster create --config k3d-config.yaml`
+- **Start / Stop cluster:** `k3d cluster start dev-platform-cluster` / `k3d cluster stop dev-platform-cluster`
+- **Delete cluster:** `k3d cluster delete dev-platform-cluster`
+- **Refresh kubeconfig:** `k3d kubeconfig merge dev-platform-cluster --kubeconfig-merge-default --kubeconfig-switch-context`
+
+## Common Troubleshooting Playbook
+
+| Symptom | Root Cause | Resolution |
+| :--- | :--- | :--- |
+| `localhost:8080` returns `404 page not found` | Traefik Ingress is working, but no `Ingress` resource matches the path/host. | Apply an `Ingress` manifest pointing to a valid `ClusterIP` Service. |
+| `localhost:8080` refuses connection | `k3d-dev-platform-cluster-serverlb` container stopped (e.g., after a failed `k3d cluster edit`). | Run `docker ps -a` and restart it with `docker start k3d-dev-platform-cluster-serverlb`. |
+| `failed to bind host port 30005: address already in use` | Windows Hyper-V/WSL2 dynamically reserves port ranges around `30000–31000`. | Map a non-reserved host port (e.g., `8081:30005@loadbalancer`). |
+| Service returns `Connection refused` internally | Service selector labels do not match Pod labels, resulting in `<none>` endpoints. | Run `kubectl get endpoints <svc-name>` and align `spec.selector` with Pod labels. |
+| `strict decoding error: unknown field` | Misspelled YAML key (e.g., `contianerPort`). | Check exact field spelling with `kubectl explain pod.spec.containers`. |
+| `no kind "service" is registered` | Lowercase `kind` value in manifest. | Capitalize `kind` properly (`Service`, `Pod`, `Deployment`, `Ingress`). |
+| PVC stays `Pending` | `local-path` StorageClass uses `WaitForFirstConsumer` binding mode. | Deploy a Pod that mounts the PVC; Kubernetes will bind it automatically. |

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-app
+  labels:
+    {{- include "fastapi-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-app
+        {{- include "fastapi-chart.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: fastapi
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.app.service.targetPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+          env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: POSTGRES_DB
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: POSTGRES_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: POSTGRES_PASSWORD
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.app.probes.liveness.path }}
+              port: {{ .Values.app.service.targetPort }}
+            initialDelaySeconds: {{ .Values.app.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.probes.liveness.periodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.app.probes.readiness.path }}
+              port: {{ .Values.app.service.targetPort }}
+            initialDelaySeconds: {{ .Values.app.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.probes.readiness.periodSeconds }}
