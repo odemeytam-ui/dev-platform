@@ -35,6 +35,7 @@ app:
 
 postgres:
   enabled: true
+  existingSecret: "sample-app-db-secret"
   image: postgres:16-alpine
   database: appdb
   username: appuser

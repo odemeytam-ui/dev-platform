@@ -28,17 +28,17 @@ spec:
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secret
+                  name: {{ include "fastapi-chart.secretName" . }}
                   key: POSTGRES_DB
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secret
+                  name: {{ include "fastapi-chart.secretName" . }}
                   key: POSTGRES_USER
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secret
+                  name: {{ include "fastapi-chart.secretName" . }}
                   key: POSTGRES_PASSWORD
           resources:
             {{- toYaml .Values.app.resources | nindent 12 }}
