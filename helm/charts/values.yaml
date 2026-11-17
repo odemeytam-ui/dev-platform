@@ -3,8 +3,8 @@ app:
   replicaCount: 2
   image:
     repository: ghcr.io/odemeytam-ui/dev-platform/fastapi-k3d-demo
-    tag: "sha-ec044ee"
-    pullPolicy: ifNotPresent
+    tag: "latest"
+    pullPolicy: Always
   env:
     APP_ENV: "default"
   service:
