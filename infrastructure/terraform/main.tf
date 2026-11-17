@@ -31,3 +31,14 @@ resource "kubernetes_secret_v1" "db_credentials" {
 
   type = "Opaque"
 }
+
+module "tenants" {
+  source   = "./modules/tenant"
+  for_each = var.tenants
+
+  team         = each.value.team
+  environment  = each.value.environment
+  cpu_limit    = each.value.cpu_limit
+  memory_limit = each.value.memory_limit
+  pod_limit    = each.value.pod_limit
+}

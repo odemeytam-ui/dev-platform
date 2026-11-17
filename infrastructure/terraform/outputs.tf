@@ -23,3 +23,13 @@ output "db_password_check" {
   value       = var.app_db_password
   sensitive   = true
 }
+
+output "provisioned_tenants" {
+  description = "All active tenant namespaces and ServiceAccounts"
+  value = {
+    for k, mod in module.tenants : k => {
+      namespace       = mod.namespace
+      service_account = mod.service_account
+    }
+  }
+}

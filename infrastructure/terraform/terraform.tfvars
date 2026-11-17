@@ -26,3 +26,20 @@ namespaces = {
         enable_quota = false
     }
 }
+
+tenants = {
+  "payments-dev" = {
+    team         = "payments"
+    environment  = "dev"
+    cpu_limit    = "1"
+    memory_limit = "1Gi"
+    pod_limit    = "10"
+  }
+  "orders-dev" = {
+    team         = "orders"
+    environment  = "dev"
+    cpu_limit    = "1"
+    memory_limit = "1Gi"
+    pod_limit    = "10"
+  }
+}
