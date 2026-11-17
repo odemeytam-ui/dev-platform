@@ -1,0 +1,16 @@
+app:
+  replicaCount: 3
+  env:
+    APP_ENV: "gitops-staging"
+  ingress:
+    enabled: true
+    host: "staging.localhost"
+    path: /
+    pathType: Prefix
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"

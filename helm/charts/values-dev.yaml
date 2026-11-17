@@ -1,7 +1,12 @@
 app:
   replicaCount: 2
   env:
-    APP_ENV: "helm-dev"
+    APP_ENV: "gitops-dev"
+  ingress:
+    enabled: true
+    host: "dev.localhost"
+    path: /
+    pathType: Prefix
   resources:
     requests:
       cpu: "50m"

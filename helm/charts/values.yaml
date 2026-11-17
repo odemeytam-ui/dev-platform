@@ -2,9 +2,9 @@ app:
   name: fastapi-app
   replicaCount: 2
   image:
-    repository: fastapi-k3d-demo
-    tag: "v1"
-    pullPolicy: IfNotPresent
+    repository: ghcr.io/odemeytam-ui/dev-platform/fastapi-k3d-demo
+    tag: "latest"
+    pullPolicy: Always
   env:
     APP_ENV: "default"
   service:
@@ -13,6 +13,7 @@ app:
     targetPort: 8000
   ingress:
     enabled: true
+    host: ""
     path: /
     pathType: Prefix
   resources:
@@ -20,7 +21,7 @@ app:
       cpu: "50m"
       memory: "64Mi"
     limits:
-      cpu: "200m"
+      cpu: "150m"
       memory: "128Mi"
   probes:
     liveness:
@@ -34,6 +35,7 @@ app:
 
 postgres:
   enabled: true
+  existingSecret: "sample-app-db-secret"
   image: postgres:16-alpine
   database: appdb
   username: appuser

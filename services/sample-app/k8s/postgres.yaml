@@ -1,15 +1,4 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: postgres-secret
-  namespace: tf-dev
-type: Opaque
-stringData:
-  POSTGRES_DB: "appdb"
-  POSTGRES_USER: "appuser"
-  POSTGRES_PASSWORD: "SuperSecretK8sPassword!"
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
