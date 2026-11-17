@@ -32,7 +32,7 @@ spec:
             - containerPort: 5432
           envFrom:
             - secretRef:
-                name: {{ .Release.Name }}-secret
+                name: {{ include "fastapi-chart.secretName" . }}
           resources:
             {{- toYaml .Values.postgres.resources | nindent 12 }}
           volumeMounts:
