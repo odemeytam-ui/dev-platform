@@ -5,17 +5,19 @@ metadata:
   namespace: argocd
 spec:
   generators:
-    - clusters:
-        selector:
-          matchLabels:
-            argocd.argoproj.io/secret-type: cluster
+    - list:
+        elements:
+          - team: payments
+            env: dev
+          - team: orders
+            env: dev
   template:
     metadata:
-      name: "sample-app-payments-dev"
+      name: "sample-app-{{team}}-{{env}}"
     spec:
       project: default
       source:
-        repoURL: https://github.com/odemeytam-ui/dev-platform.git
+        repoURL: https://github.com
         targetRevision: main
         path: helm/charts
         helm:
@@ -23,14 +25,14 @@ spec:
             - values.yaml
           parameters:
             - name: app.env.APP_ENV
-              value: "payments-dev"
+              value: "{{team}}-{{env}}"
             - name: app.ingress.host
-              value: "payments-dev.localhost"
+              value: "{{team}}-{{env}}.localhost"
             - name: postgres.enabled
               value: "false"
       destination:
         server: https://default.svc
-        namespace: tenant-payments-dev
+        namespace: "tenant-{{team}}-{{env}}"
       syncPolicy:
         automated:
           prune: true
