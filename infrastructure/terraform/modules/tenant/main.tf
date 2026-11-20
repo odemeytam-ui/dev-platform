@@ -29,7 +29,7 @@ resource "kubernetes_namespace_v1" "tenant" {
 resource "kubernetes_resource_quota_v1" "quota" {
   metadata {
     name      = "${local.namespace_name}-quota"
-    namespace = kubernetes_namespace_v1.tenant.metadata.name
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
   }
 
   spec {
@@ -45,7 +45,7 @@ resource "kubernetes_resource_quota_v1" "quota" {
 resource "kubernetes_limit_range_v1" "limits" {
   metadata {
     name      = "${local.namespace_name}-limits"
-    namespace = kubernetes_namespace_v1.tenant.metadata.name
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
   }
 
   spec {
@@ -67,14 +67,14 @@ resource "kubernetes_limit_range_v1" "limits" {
 resource "kubernetes_service_account_v1" "team_sa" {
   metadata {
     name      = "${var.team}-sa"
-    namespace = kubernetes_namespace_v1.tenant.metadata.name
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
   }
 }
 
 resource "kubernetes_role_v1" "team_admin" {
   metadata {
     name      = "${var.team}-namespace-role"
-    namespace = kubernetes_namespace_v1.tenant.metadata.name
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
   }
 
   rule {
@@ -87,19 +87,19 @@ resource "kubernetes_role_v1" "team_admin" {
 resource "kubernetes_role_binding_v1" "team_binding" {
   metadata {
     name      = "${var.team}-namespace-binding"
-    namespace = kubernetes_namespace_v1.tenant.metadata.name
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
   }
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = kubernetes_role_v1.team_admin.metadata.name
+    name      = kubernetes_role_v1.team_admin.metadata[0].name
   }
 
   subject {
     kind      = "ServiceAccount"
-    name      = kubernetes_service_account_v1.team_sa.metadata.name
-    namespace = kubernetes_namespace_v1.tenant.metadata.name
+    name      = kubernetes_service_account_v1.team_sa.metadata[0].name
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
   }
 }
 
@@ -107,7 +107,7 @@ resource "kubernetes_role_binding_v1" "team_binding" {
 resource "kubernetes_network_policy_v1" "tenant_isolation" {
   metadata {
     name      = "tenant-isolation-policy"
-    namespace = kubernetes_namespace_v1.tenant.metadata.name
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
   }
 
   spec {
