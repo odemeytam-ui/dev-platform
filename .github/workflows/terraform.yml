@@ -2,12 +2,12 @@ name: Terraform Tenant Provisioning
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["main"]
     paths:
       - "infrastructure/terraform/**"
       - ".github/workflows/terraform.yml"
   pull_request:
-    branches: ["dev"]
+    branches: ["main"]
     paths:
       - "infrastructure/terraform/**"
       - ".github/workflows/terraform.yml"
