@@ -29,13 +29,13 @@ variable "app_db_password" {
 }
 
 variable "tenants" {
-  description = "Map of tenants and their environment resource tiers"
-  type = map(object({
-    team         = string
-    environment  = string
-    cpu_limit    = optional(string, "1")
-    memory_limit = optional(string, "1Gi")
-    pod_limit    = optional(string, "10")
-  }))
-  default = {}
+    description = "Map of tenants and their environment resource tiers"
+    type = map(object({
+        team         = string
+        environment  = string
+        cpu_limit    = optional(string, "1")
+        memory_limit = optional(string, "1Gi")
+        pod_limit    = optional(string, "10")
+    }))
+    default = {}
 }
