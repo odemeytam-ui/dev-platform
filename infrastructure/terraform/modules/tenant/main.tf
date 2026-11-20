@@ -4,7 +4,33 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 2.35"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
   }
+}
+
+# Generate a unique random password per tenant (stored only in Terraform state & K8s Secret, never in Git)
+resource "random_password" "db_password" {
+  length  = 24
+  special = false
+}
+
+# Create the Kubernetes Secret expected by the Helm chart (existingSecret: "sample-app-db-secret")
+resource "kubernetes_secret_v1" "db_secret" {
+  metadata {
+    name      = "sample-app-db-secret"
+    namespace = kubernetes_namespace_v1.tenant.metadata[0].name
+  }
+
+  data = {
+    POSTGRES_DB       = "appdb"
+    POSTGRES_USER     = "appuser"
+    POSTGRES_PASSWORD = random_password.db_password.result
+  }
+
+  type = "Opaque"
 }
 
 locals {
