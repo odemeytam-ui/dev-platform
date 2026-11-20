@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: tenant-sample-apps
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - team: payments
+            env: dev
+          - team: orders
+            env: dev
+  template:
+    metadata:
+      name: "sample-app-{{team}}-{{env}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/odemeytam-ui/dev-platform.git
+        targetRevision: main
+        path: helm/charts
+        helm:
+          valueFiles:
+            - values.yaml
+          parameters:
+            - name: app.env.APP_ENV
+              value: "{{team}}-{{env}}"
+            - name: app.ingress.host
+              value: "{{team}}-{{env}}.localhost"
+            - name: postgres.enabled
+              value: "false"
+      destination:
+        server: https://default.svc
+        namespace: "tenant-{{team}}-{{env}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=false

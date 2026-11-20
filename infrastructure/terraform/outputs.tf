@@ -1,11 +1,11 @@
 output "provisioned_namespaces" {
-    description = "Summary of all namespaces created by Terraform"
-    value = {
-        for k, mod in module.namespaces : k => {
-            name   = mod.name
-            labels = mod.labels
-        }
+  description = "Summary of all namespaces created by Terraform"
+  value = {
+    for k, mod in module.namespaces : k => {
+      name   = mod.name
+      labels = mod.labels
     }
+  }
 }
 
 output "dev_service_account" {
@@ -22,4 +22,14 @@ output "db_password_check" {
   description = "Demonstrates Terraform redacting sensitive outputs in CLI"
   value       = var.app_db_password
   sensitive   = true
+}
+
+output "provisioned_tenants" {
+  description = "All active tenant namespaces and ServiceAccounts"
+  value = {
+    for k, mod in module.tenants : k => {
+      namespace       = mod.namespace
+      service_account = mod.service_account
+    }
+  }
 }
