@@ -33,3 +33,12 @@ output "provisioned_tenants" {
     }
   }
 }
+
+output "tenant_db_secret_names" {
+  description = "Database Secret names for each tenant"
+
+  value = {
+    for tenant, module_output in module.tenants :
+    tenant => module_output.db_secret_name
+  }
+}
